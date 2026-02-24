@@ -200,6 +200,7 @@ function endGame() {
     const seconds = timeTaken % 60;
     
     // Save result to database if student session exists
+    const isAssignment = gameState.assignmentId !== null && gameState.assignmentId !== undefined;
     if (typeof db !== 'undefined' && gameState.studentId && gameState.classId) {
         const resultData = {
             studentId: gameState.studentId,
@@ -224,7 +225,26 @@ function endGame() {
     document.getElementById('resultCorrect').textContent = `${correctAnswers} / ${totalQuestions}`;
     document.getElementById('resultTime').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
     
+    // Show assignment completion message if applicable
+    if (isAssignment) {
+        const accuracy = Math.round((correctAnswers / totalQuestions) * 100);
+        document.getElementById('resultsScreen').querySelector('.results-summary').innerHTML += 
+            `<p style="color: #28a745; font-weight: bold; margin-top: 20px;">✅ Assignment submitted successfully!</p>`;
+    }
+    
     showSection('resultsScreen');
+    
+    // Auto-redirect to student dashboard for assignments
+    if (isAssignment && typeof showSection !== 'undefined') {
+        setTimeout(() => {
+            showSection('studentDashboard');
+            if (typeof switchStudentTab === 'function') {
+                switchStudentTab('completed');
+            }
+            // Clear assignment context
+            gameState.assignmentId = null;
+        }, 3000);
+    }
 }
 
 // Play again
@@ -539,6 +559,39 @@ function loadInteractiveElement(topic) {
             `;
             break;
             
+        case 'algebra':
+            interactiveArea.innerHTML = `
+                <h3 class="interactive-title">⚖️ Equation Balance Scale!</h3>
+                <div class="balance-scale-interactive">
+                    <p>Solve the equation by balancing both sides!</p>
+                    <div class="equation-display">
+                        <div class="equation-side" id="leftSide">
+                            <h4>Left Side</h4>
+                            <div class="equation-content" id="leftContent">x + 3</div>
+                            <div class="value-display" id="leftValue">= ?</div>
+                        </div>
+                        <div class="equals-sign">=</div>
+                        <div class="equation-side" id="rightSide">
+                            <h4>Right Side</h4>
+                            <div class="equation-content" id="rightContent">12</div>
+                            <div class="value-display" id="rightValue">= 12</div>
+                        </div>
+                    </div>
+                    <div class="algebra-controls">
+                        <h4>Try different values of x:</h4>
+                        <div class="slider-container">
+                            <input type="range" id="xValue" min="0" max="20" value="0" oninput="updateEquation()" class="slider">
+                            <div class="slider-label">x = <span id="xDisplay">0</span></div>
+                        </div>
+                        <div id="balanceMessage" class="balance-message">Move the slider to find x!</div>
+                    </div>
+                    <button class="reset-btn" onclick="newEquation()">🔄 New Equation</button>
+                </div>
+            `;
+            currentEquation = generateEquation();
+            displayEquation();
+            break;
+            
         case 'integers':
             interactiveArea.innerHTML = `
                 <h3 class="interactive-title">🌡️ Temperature Explorer!</h3>
@@ -577,27 +630,41 @@ function loadInteractiveElement(topic) {
             
         case 'geometry':
             interactiveArea.innerHTML = `
-                <h3 class="interactive-title">📐 Shape Calculator!</h3>
-                <div class="shape-builder">
-                    <div style="text-align: center; width: 100%;">
-                        <p>Click shapes to see their properties!</p>
-                        <div style="display: flex; gap: 20px; justify-content: center; margin: 20px;">
-                            <div class="draggable-shape" onclick="showShapeInfo('square')" style="width: 100px; height: 100px; background: #667eea;">
-                                <p style="color: white; text-align: center; line-height: 100px; margin: 0;">Square</p>
-                            </div>
-                            <div class="draggable-shape" onclick="showShapeInfo('rectangle')" style="width: 120px; height: 80px; background: #ff6b6b;">
-                                <p style="color: white; text-align: center; line-height: 80px; margin: 0;">Rectangle</p>
-                            </div>
-                            <div class="draggable-shape" onclick="showShapeInfo('circle')" style="width: 100px; height: 100px; background: #28a745; border-radius: 50%;">
-                                <p style="color: white; text-align: center; line-height: 100px; margin: 0;">Circle</p>
-                            </div>
+                <h3 class="interactive-title">📐 Interactive Shape Builder!</h3>
+                <div class="shape-builder-enhanced">
+                    <div class="shape-selector">
+                        <button class="shape-btn" onclick="selectShape('square')">🟦 Square</button>
+                        <button class="shape-btn" onclick="selectShape('rectangle')">🟥 Rectangle</button>
+                        <button class="shape-btn" onclick="selectShape('triangle')">🔺 Triangle</button>
+                        <button class="shape-btn" onclick="selectShape('circle')">🟢 Circle</button>
+                    </div>
+                    <div class="shape-canvas" id="shapeCanvas">
+                        <div class="shape-container" id="currentShape">
+                            <div class="shape-square" id="shapeDisplay"></div>
                         </div>
-                        <div id="shapeInfo" class="fraction-display" style="max-width: 400px; margin: 20px auto;">
-                            <p>Click a shape to see how to calculate its area!</p>
+                    </div>
+                    <div class="shape-controls">
+                        <div class="control-group">
+                            <label for="dimension1"><span id="dim1Label">Side</span>: <span id="dim1Value">5</span></label>
+                            <input type="range" id="dimension1" min="2" max="15" value="5" oninput="updateShape()" class="slider">
+                        </div>
+                        <div class="control-group" id="dimension2Group" style="display:none;">
+                            <label for="dimension2"><span id="dim2Label">Width</span>: <span id="dim2Value">5</span></label>
+                            <input type="range" id="dimension2" min="2" max="15" value="5" oninput="updateShape()" class="slider">
+                        </div>
+                    </div>
+                    <div class="shape-info-display" id="shapeResults">
+                        <h4>📊 Measurements:</h4>
+                        <p><strong>Area:</strong> <span id="areaResult">25</span> square units</p>
+                        <p><strong>Perimeter:</strong> <span id="perimeterResult">20</span> units</p>
+                        <div class="formula-display" id="formulaDisplay">
+                            <p><strong>Formula:</strong> Area = side × side</p>
                         </div>
                     </div>
                 </div>
             `;
+            currentGeometryShape = 'square';
+            updateShape();
             break;
             
         default:
@@ -708,7 +775,181 @@ function resetPercentPizza() {
     updatePercentDisplay();
 }
 
-// Shape info
+// ===== ALGEBRA GAME =====
+let currentEquation = { a: 1, b: 3, c: 12 }; // represents ax + b = c
+
+function generateEquation() {
+    const equations = [
+        { a: 1, b: 5, c: 12, display: 'x + 5', answer: 7 },
+        { a: 2, b: 0, c: 10, display: '2x', answer: 5 },
+        { a: 1, b: -3, c: 7, display: 'x - 3', answer: 10 },
+        { a: 3, b: 0, c: 15, display: '3x', answer: 5 },
+        { a: 2, b: 3, c: 11, display: '2x + 3', answer: 4 },
+        { a: 1, b: 8, c: 15, display: 'x + 8', answer: 7 },
+        { a: 4, b: -2, c: 14, display: '4x - 2', answer: 4 },
+        { a: 1, b: -5, c: 10, display: 'x - 5', answer: 15 }
+    ];
+    return equations[Math.floor(Math.random() * equations.length)];
+}
+
+function displayEquation() {
+    document.getElementById('leftContent').textContent = currentEquation.display;
+    document.getElementById('rightContent').textContent = currentEquation.c;
+    document.getElementById('rightValue').textContent = '= ' + currentEquation.c;
+    document.getElementById('xValue').value = 0;
+    document.getElementById('xDisplay').textContent = 0;
+    updateEquation();
+}
+
+function updateEquation() {
+    const x = parseInt(document.getElementById('xValue').value);
+    document.getElementById('xDisplay').textContent = x;
+    
+    const leftValue = currentEquation.a * x + currentEquation.b;
+    document.getElementById('leftValue').textContent = '= ' + leftValue;
+    
+    const message = document.getElementById('balanceMessage');
+    const leftSide = document.getElementById('leftSide');
+    const rightSide = document.getElementById('rightSide');
+    
+    if (leftValue === currentEquation.c) {
+        message.textContent = '🎉 Perfect! The equation is balanced! x = ' + x;
+        message.style.color = '#28a745';
+        leftSide.style.background = 'linear-gradient(135deg, #28a745, #20c997)';
+        rightSide.style.background = 'linear-gradient(135deg, #28a745, #20c997)';
+    } else if (leftValue < currentEquation.c) {
+        message.textContent = '⬆️ Too small! Try a larger value of x';
+        message.style.color = '#ffc107';
+        leftSide.style.background = 'linear-gradient(135deg, #5a5a5a, #4a4a4a)';
+        rightSide.style.background = 'linear-gradient(135deg, #5a5a5a, #4a4a4a)';
+    } else {
+        message.textContent = '⬇️ Too big! Try a smaller value of x';
+        message.style.color = '#ff6b6b';
+        leftSide.style.background = 'linear-gradient(135deg, #5a5a5a, #4a4a4a)';
+        rightSide.style.background = 'linear-gradient(135deg, #5a5a5a, #4a4a4a)';
+    }
+}
+
+function newEquation() {
+    currentEquation = generateEquation();
+    displayEquation();
+}
+
+// ===== GEOMETRY GAME =====
+let currentGeometryShape = 'square';
+
+function selectShape(shape) {
+    currentGeometryShape = shape;
+    
+    // Reset sliders
+    document.getElementById('dimension1').value = 5;
+    document.getElementById('dimension2').value = 5;
+    
+    const dim2Group = document.getElementById('dimension2Group');
+    
+    if (shape === 'square' || shape === 'circle') {
+        dim2Group.style.display = 'none';
+    } else {
+        dim2Group.style.display = 'block';
+    }
+    
+    // Update labels
+    const dim1Label = document.getElementById('dim1Label');
+    const dim2Label = document.getElementById('dim2Label');
+    
+    switch(shape) {
+        case 'square':
+            dim1Label.textContent = 'Side';
+            break;
+        case 'rectangle':
+            dim1Label.textContent = 'Length';
+            dim2Label.textContent = 'Width';
+            break;
+        case 'triangle':
+            dim1Label.textContent = 'Base';
+            dim2Label.textContent = 'Height';
+            break;
+        case 'circle':
+            dim1Label.textContent = 'Radius';
+            break;
+    }
+    
+    updateShape();
+}
+
+function updateShape() {
+    const dim1 = parseInt(document.getElementById('dimension1').value);
+    const dim2 = parseInt(document.getElementById('dimension2').value);
+    
+    document.getElementById('dim1Value').textContent = dim1;
+    document.getElementById('dim2Value').textContent = dim2;
+    
+    const shapeDisplay = document.getElementById('shapeDisplay');
+    const areaResult = document.getElementById('areaResult');
+    const perimeterResult = document.getElementById('perimeterResult');
+    const formulaDisplay = document.getElementById('formulaDisplay');
+    
+    let area, perimeter, formula;
+    
+    switch(currentGeometryShape) {
+        case 'square':
+            area = dim1 * dim1;
+            perimeter = 4 * dim1;
+            formula = `<p><strong>Area Formula:</strong> side × side = ${dim1} × ${dim1}</p>
+                      <p><strong>Perimeter Formula:</strong> 4 × side = 4 × ${dim1}</p>`;
+            shapeDisplay.className = 'shape-square';
+            shapeDisplay.style.width = (dim1 * 20) + 'px';
+            shapeDisplay.style.height = (dim1 * 20) + 'px';
+            shapeDisplay.style.borderRadius = '0';
+            shapeDisplay.style.background = '#667eea';
+            break;
+            
+        case 'rectangle':
+            area = dim1 * dim2;
+            perimeter = 2 * (dim1 + dim2);
+            formula = `<p><strong>Area Formula:</strong> length × width = ${dim1} × ${dim2}</p>
+                      <p><strong>Perimeter Formula:</strong> 2(length + width) = 2(${dim1} + ${dim2})</p>`;
+            shapeDisplay.className = 'shape-rectangle';
+            shapeDisplay.style.width = (dim1 * 20) + 'px';
+            shapeDisplay.style.height = (dim2 * 20) + 'px';
+            shapeDisplay.style.borderRadius = '0';
+            shapeDisplay.style.background = '#ff6b6b';
+            break;
+            
+        case 'triangle':
+            area = (dim1 * dim2) / 2;
+            perimeter = Math.round(dim1 + Math.sqrt(dim1*dim1/4 + dim2*dim2) * 2);
+            formula = `<p><strong>Area Formula:</strong> (base × height) ÷ 2 = (${dim1} × ${dim2}) ÷ 2</p>
+                      <p><strong>Perimeter:</strong> Approximately ${perimeter} units</p>`;
+            shapeDisplay.className = 'shape-triangle';
+            shapeDisplay.style.width = '0';
+            shapeDisplay.style.height = '0';
+            shapeDisplay.style.borderLeft = (dim1 * 10) + 'px solid transparent';
+            shapeDisplay.style.borderRight = (dim1 * 10) + 'px solid transparent';
+            shapeDisplay.style.borderBottom = (dim2 * 20) + 'px solid #ffc107';
+            shapeDisplay.style.background = 'transparent';
+            break;
+            
+        case 'circle':
+            area = Math.round(Math.PI * dim1 * dim1 * 100) / 100;
+            perimeter = Math.round(2 * Math.PI * dim1 * 100) / 100;
+            formula = `<p><strong>Area Formula:</strong> π × radius² = 3.14 × ${dim1}²</p>
+                      <p><strong>Circumference:</strong> 2 × π × radius = 2 × 3.14 × ${dim1}</p>`;
+            shapeDisplay.className = 'shape-circle';
+            shapeDisplay.style.width = (dim1 * 20) + 'px';
+            shapeDisplay.style.height = (dim1 * 20) + 'px';
+            shapeDisplay.style.borderRadius = '50%';
+            shapeDisplay.style.background = '#28a745';
+            shapeDisplay.style.border = 'none';
+            break;
+    }
+    
+    areaResult.textContent = area;
+    perimeterResult.textContent = perimeter;
+    formulaDisplay.innerHTML = formula;
+}
+
+// Shape info (keep for compatibility)
 function showShapeInfo(shape) {
     const info = document.getElementById('shapeInfo');
     
