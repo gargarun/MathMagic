@@ -273,6 +273,92 @@ header p {
     min-height: 400px;
 }
 
+/* Game Interactive Area */
+.game-interactive-area {
+    margin-bottom: 20px;
+}
+
+.game-interactive-container {
+    background: #3a3a3a;
+    border-radius: 15px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.game-interactive-container .interactive-title {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+/* Compact styles for in-game interactive elements */
+.balance-scale-interactive.compact {
+    gap: 15px;
+}
+
+.algebra-controls.compact {
+    padding: 15px;
+    gap: 10px;
+}
+
+.equation-side {
+    padding: 15px;
+    min-width: 120px;
+}
+
+.equation-content {
+    font-size: 1.5em;
+}
+
+.slider-label {
+    font-size: 1.2em;
+}
+
+.balance-message {
+    font-size: 1em;
+    padding: 10px;
+}
+
+.reset-btn.compact {
+    padding: 8px 15px;
+    font-size: 0.9em;
+}
+
+.shape-builder-enhanced.compact {
+    gap: 15px;
+}
+
+.shape-selector.compact {
+    gap: 10px;
+}
+
+.shape-btn.compact {
+    padding: 8px 12px;
+    font-size: 1em;
+}
+
+.shape-canvas.compact {
+    min-height: 150px;
+    padding: 15px;
+}
+
+.shape-controls.compact {
+    gap: 10px;
+}
+
+.control-group.compact {
+    gap: 5px;
+}
+
+.shape-info-display.compact {
+    padding: 10px;
+}
+
+.shape-info-display.compact p {
+    margin: 5px 0;
+    font-size: 0.95em;
+}
+
 .question-card {
     background: #5a5a5a;
     border-radius: 15px;
@@ -901,6 +987,121 @@ header p {
     color: #FFD700;
 }
 
+.thermometer-interactive.compact {
+    gap: 10px;
+}
+
+.thermometer.compact {
+    width: 40px;
+    height: 200px;
+}
+
+/* Ratio Mixer */
+.ratio-mixer {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    padding: 20px;
+}
+
+.ratio-mixer.compact {
+    padding: 10px;
+    gap: 10px;
+}
+
+.ratio-display-container {
+    width: 100%;
+    max-width: 500px;
+}
+
+.ratio-bar-container {
+    display: flex;
+    height: 60px;
+    width: 100%;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    border: 3px solid #333;
+}
+
+.ratio-bar-container.compact {
+    height: 40px;
+}
+
+.ratio-bar {
+    transition: width 0.5s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white;
+    font-size: 1.2em;
+}
+
+.ratio-bar.blue {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.ratio-bar.orange {
+    background: linear-gradient(135deg, #f093fb, #f5576c);
+}
+
+.ratio-result {
+    text-align: center;
+    margin-top: 15px;
+    padding: 15px;
+    background: #4a4a4a;
+    border-radius: 10px;
+}
+
+.ratio-result.compact {
+    margin-top: 5px;
+    padding: 8px;
+}
+
+.ratio-result h4 {
+    color: #FFD700;
+    font-size: 1.5em;
+    margin-bottom: 5px;
+}
+
+.ratio-result.compact span {
+    color: #FFD700;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.ratio-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.ratio-controls.compact {
+    gap: 8px;
+}
+
+.ratio-examples {
+    background: #3a3a3a;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    max-width: 400px;
+}
+
+.ratio-examples h4 {
+    color: #FFD700;
+    margin-bottom: 10px;
+}
+
+.ratio-examples p {
+    color: #e0e0e0;
+    margin: 5px 0;
+}
+
 /* Balance Interactive (Ratios) */
 .balance-interactive {
     display: flex;
@@ -1162,6 +1363,148 @@ header p {
 }
 
 /* Algebra Balance Scale */
+.balance-scale-interactive {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    align-items: center;
+}
+
+/* Number Line Game */
+.number-line-game {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    padding: 20px;
+}
+
+.number-line-game.compact {
+    padding: 10px;
+    gap: 15px;
+}
+
+.number-line-container {
+    width: 100%;
+    max-width: 600px;
+    padding: 20px 0;
+}
+
+.number-line {
+    position: relative;
+    height: 60px;
+    background: linear-gradient(to right, #ff6b6b 0%, #FFD700 50%, #28a745 100%);
+    border-radius: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.number-line::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: -10px;
+    bottom: -10px;
+    width: 3px;
+    background: white;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.number-marker {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2.5em;
+    transition: left 0.5s ease, transform 0.3s ease;
+    cursor: grab;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+    z-index: 10;
+}
+
+.number-marker:active {
+    cursor: grabbing;
+    transform: translate(-50%, -50%) scale(1.2);
+}
+
+.number-labels {
+    position: relative;
+    height: 30px;
+    margin-top: 10px;
+}
+
+.number-label {
+    position: absolute;
+    transform: translateX(-50%);
+    font-size: 0.9em;
+    color: #e0e0e0;
+    font-weight: 500;
+}
+
+.number-display {
+    text-align: center;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #e0e0e0;
+    padding: 15px;
+    background: #4a4a4a;
+    border-radius: 10px;
+    min-width: 250px;
+}
+
+.number-line-controls {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.control-btn {
+    padding: 15px 25px;
+    font-size: 1.2em;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.control-btn.add {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+}
+
+.control-btn.add:hover {
+    background: linear-gradient(135deg, #20c997, #28a745);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(40, 167, 69, 0.4);
+}
+
+.control-btn.subtract {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+    color: white;
+}
+
+.control-btn.subtract:hover {
+    background: linear-gradient(135deg, #ee5a6f, #ff6b6b);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(255, 107, 107, 0.4);
+}
+
+.operation-history {
+    text-align: center;
+    padding: 15px;
+    background: #3a3a3a;
+    border-radius: 10px;
+    color: #e0e0e0;
+    font-size: 1.1em;
+    max-width: 600px;
+    width: 100%;
+}
+
+.operation-history strong {
+    color: #FFD700;
+}
+
 .balance-scale-interactive {
     display: flex;
     flex-direction: column;

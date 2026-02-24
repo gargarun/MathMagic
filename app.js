@@ -152,6 +152,9 @@ function startGame() {
     showSection('gameScreen');
     startTimer();
     
+    // Load interactive game elements for algebra and geometry
+    loadGameInteractive();
+    
     // Load game based on mode
     if (currentMode === 'quiz') {
         startQuizMode();
@@ -159,6 +162,106 @@ function startGame() {
         startPuzzleMode();
     } else if (currentMode === 'challenge') {
         startChallengeMode();
+    }
+}
+
+// Load interactive game elements during gameplay
+function loadGameInteractive() {
+    const gameInteractiveArea = document.getElementById('gameInteractiveArea');
+    
+    if (currentTopic === 'algebra') {
+        gameInteractiveArea.innerHTML = `
+            <div class="game-interactive-container">
+                <h3 class="interactive-title">🚶 Number Line Journey</h3>
+                <div class="number-line-game compact">
+                    <div class="number-line-container">
+                        <div class="number-line">
+                            <div class="number-marker" id="numberMarker" style="left: 50%;">🧮</div>
+                            <div class="number-labels" id="numberLabels"></div>
+                        </div>
+                    </div>
+                    <div class="number-display" id="currentNumberDisplay">Current Position: <span id="currentNum">0</span></div>
+                    <div class="number-line-controls">
+                        <button class="control-btn subtract" onclick="moveNumberLine(-5)">-5</button>
+                        <button class="control-btn subtract" onclick="moveNumberLine(-1)">-1</button>
+                        <button class="control-btn add" onclick="moveNumberLine(1)">+1</button>
+                        <button class="control-btn add" onclick="moveNumberLine(5)">+5</button>
+                    </div>
+                    <div class="operation-history" id="operationHistory">Operations: Start at 0</div>
+                    <button class="reset-btn compact" onclick="resetNumberLine()">🔄 Reset</button>
+                </div>
+            </div>
+        `;
+        initNumberLine();
+    } else if (currentTopic === 'geometry') {
+        gameInteractiveArea.innerHTML = `
+            <div class="game-interactive-container">
+                <h3 class="interactive-title">📐 Shape Builder</h3>
+                <div class="shape-builder-enhanced compact">
+                    <div class="shape-selector compact">
+                        <button class="shape-btn compact" onclick="selectShape('square')">🟦</button>
+                        <button class="shape-btn compact" onclick="selectShape('rectangle')">🟥</button>
+                        <button class="shape-btn compact" onclick="selectShape('triangle')">🔺</button>
+                        <button class="shape-btn compact" onclick="selectShape('circle')">🟢</button>
+                    </div>
+                    <div class="shape-canvas compact" id="shapeCanvas">
+                        <div class="shape-container" id="currentShape">
+                            <div class="shape-square" id="shapeDisplay"></div>
+                        </div>
+                    </div>
+                    <div class="shape-controls compact">
+                        <div class="control-group compact">
+                            <label for="dimension1"><span id="dim1Label">Side</span>: <span id="dim1Value">5</span></label>
+                            <input type="range" id="dimension1" min="2" max="15" value="5" oninput="updateShape()" class="slider">
+                        </div>
+                        <div class="control-group compact" id="dimension2Group" style="display:none;">
+                            <label for="dimension2"><span id="dim2Label">Width</span>: <span id="dim2Value">5</span></label>
+                            <input type="range" id="dimension2" min="2" max="15" value="5" oninput="updateShape()" class="slider">
+                        </div>
+                    </div>
+                    <div class="shape-info-display compact" id="shapeResults">
+                        <p><strong>Area:</strong> <span id="areaResult">25</span> | <strong>Perimeter:</strong> <span id="perimeterResult">20</span></p>
+                    </div>
+                </div>
+            </div>
+        `;
+        currentGeometryShape = 'square';
+        updateShape();
+    } else if (currentTopic === 'integers') {
+        gameInteractiveArea.innerHTML = `
+            <div class="game-interactive-container">
+                <h3 class="interactive-title">🌡️ Temperature</h3>
+                <div class="thermometer-interactive compact">
+                    <div class="thermometer compact" id="thermometer" onclick="changeTemp(event)">
+                        <div class="temp-marker" id="tempMarker" style="top: 150px;"></div>
+                    </div>
+                    <div class="temp-display" id="tempDisplay">0°C</div>
+                    <p style="font-size: 0.9em; margin: 5px 0;">Click to change temperature</p>
+                </div>
+            </div>
+        `;
+    } else if (currentTopic === 'ratios') {
+        gameInteractiveArea.innerHTML = `
+            <div class="game-interactive-container">
+                <h3 class="interactive-title">🧃 Ratio Mixer</h3>
+                <div class="ratio-mixer compact">
+                    <div class="ratio-bar-container compact">
+                        <div class="ratio-bar blue" id="ratioBarA" style="width: 50%;"></div>
+                        <div class="ratio-bar orange" id="ratioBarB" style="width: 50%;"></div>
+                    </div>
+                    <div class="ratio-result compact">
+                        <span id="ratioDisplay">1:1</span>
+                    </div>
+                    <div class="ratio-controls compact">
+                        <input type="range" id="partA" min="1" max="10" value="5" oninput="updateRatio()" class="slider">
+                        <input type="range" id="partB" min="1" max="10" value="5" oninput="updateRatio()" class="slider">
+                    </div>
+                </div>
+            </div>
+        `;
+        initRatio();
+    } else {
+        gameInteractiveArea.innerHTML = '';
     }
 }
 
@@ -271,6 +374,7 @@ function shareOnWhatsApp() {
 const learningConcepts = {
     algebra: {
         title: "Understanding Algebra",
+        interactive: true,
         content: `
             <h3>What is Algebra? 🧮</h3>
             <p>Algebra is like solving puzzles where some numbers are hidden! We use letters (like x, y) to represent these mystery numbers.</p>
@@ -342,6 +446,7 @@ const learningConcepts = {
     },
     geometry: {
         title: "Understanding Geometry",
+        interactive: true,
         content: `
             <h3>What is Geometry? 📐</h3>
             <p>Geometry is about shapes, sizes, and spaces around us. Everything you see has a shape!</p>
@@ -428,6 +533,7 @@ const learningConcepts = {
     },
     integers: {
         title: "Understanding Integers",
+        interactive: true,
         content: `
             <h3>What are Integers? ➕➖</h3>
             <p>Integers are whole numbers that can be positive, negative, or zero.</p>
@@ -469,6 +575,7 @@ const learningConcepts = {
     },
     ratios: {
         title: "Understanding Ratios",
+        interactive: true,
         content: `
             <h3>What are Ratios? ⚖️</h3>
             <p>A ratio compares two amounts. It shows how much of one thing there is compared to another.</p>
@@ -561,35 +668,31 @@ function loadInteractiveElement(topic) {
             
         case 'algebra':
             interactiveArea.innerHTML = `
-                <h3 class="interactive-title">⚖️ Equation Balance Scale!</h3>
-                <div class="balance-scale-interactive">
-                    <p>Solve the equation by balancing both sides!</p>
-                    <div class="equation-display">
-                        <div class="equation-side" id="leftSide">
-                            <h4>Left Side</h4>
-                            <div class="equation-content" id="leftContent">x + 3</div>
-                            <div class="value-display" id="leftValue">= ?</div>
-                        </div>
-                        <div class="equals-sign">=</div>
-                        <div class="equation-side" id="rightSide">
-                            <h4>Right Side</h4>
-                            <div class="equation-content" id="rightContent">12</div>
-                            <div class="value-display" id="rightValue">= 12</div>
+                <h3 class="interactive-title">🚶 Number Line Journey!</h3>
+                <div class="number-line-game">
+                    <p>Move forward to add, backward to subtract!</p>
+                    <div class="number-line-container">
+                        <div class="number-line">
+                            <div class="number-marker" id="numberMarker" style="left: 50%;">🧮</div>
+                            <div class="number-labels" id="numberLabels"></div>
                         </div>
                     </div>
-                    <div class="algebra-controls">
-                        <h4>Try different values of x:</h4>
-                        <div class="slider-container">
-                            <input type="range" id="xValue" min="0" max="20" value="0" oninput="updateEquation()" class="slider">
-                            <div class="slider-label">x = <span id="xDisplay">0</span></div>
-                        </div>
-                        <div id="balanceMessage" class="balance-message">Move the slider to find x!</div>
+                    <div class="number-display" id="currentNumberDisplay">
+                        Current Position: <span id="currentNum" style="font-size: 2em; color: #FFD700;">0</span>
                     </div>
-                    <button class="reset-btn" onclick="newEquation()">🔄 New Equation</button>
+                    <div class="number-line-controls">
+                        <button class="control-btn subtract" onclick="moveNumberLine(-5)">⬅️ -5</button>
+                        <button class="control-btn subtract" onclick="moveNumberLine(-1)">⬅️ -1</button>
+                        <button class="control-btn add" onclick="moveNumberLine(1)">+1 ➡️</button>
+                        <button class="control-btn add" onclick="moveNumberLine(5)">+5 ➡️</button>
+                    </div>
+                    <div class="operation-history" id="operationHistory">
+                        <strong>Your Journey:</strong> Start at 0
+                    </div>
+                    <button class="reset-btn" onclick="resetNumberLine()">🔄 Reset to Zero</button>
                 </div>
             `;
-            currentEquation = generateEquation();
-            displayEquation();
+            initNumberLine();
             break;
             
         case 'integers':
@@ -665,6 +768,41 @@ function loadInteractiveElement(topic) {
             `;
             currentGeometryShape = 'square';
             updateShape();
+            break;
+            
+        case 'ratios':
+            interactiveArea.innerHTML = `
+                <h3 class="interactive-title">🧃 Ratio Mixer!</h3>
+                <div class="ratio-mixer">
+                    <p>Adjust the sliders to see different ratios!</p>
+                    <div class="ratio-display-container">
+                        <div class="ratio-bar-container">
+                            <div class="ratio-bar blue" id="ratioBarA" style="width: 50%;"></div>
+                            <div class="ratio-bar orange" id="ratioBarB" style="width: 50%;"></div>
+                        </div>
+                        <div class="ratio-result">
+                            <h4>Current Ratio: <span id="ratioDisplay">1:1</span></h4>
+                            <p id="ratioSimplified"></p>
+                        </div>
+                    </div>
+                    <div class="ratio-controls">
+                        <div class="control-group">
+                            <label>🔵 Part A: <span id="partAValue">5</span></label>
+                            <input type="range" id="partA" min="1" max="10" value="5" oninput="updateRatio()" class="slider">
+                        </div>
+                        <div class="control-group">
+                            <label>🟠 Part B: <span id="partBValue">5</span></label>
+                            <input type="range" id="partB" min="1" max="10" value="5" oninput="updateRatio()" class="slider">
+                        </div>
+                    </div>
+                    <div class="ratio-examples" id="ratioExamples">
+                        <h4>🍹 Example: Making Juice</h4>
+                        <p>If you use <strong>5 cups</strong> of Part A (juice),<br>you need <strong>5 cups</strong> of Part B (water)</p>
+                    </div>
+                    <button class="reset-btn" onclick="resetRatio()">🔄 Reset to 1:1</button>
+                </div>
+            `;
+            initRatio();
             break;
             
         default:
@@ -775,7 +913,162 @@ function resetPercentPizza() {
     updatePercentDisplay();
 }
 
-// ===== ALGEBRA GAME =====
+// ===== RATIOS MIXER GAME =====
+let partAValue = 5;
+let partBValue = 5;
+
+function initRatio() {
+    partAValue = 5;
+    partBValue = 5;
+    updateRatio();
+}
+
+function updateRatio() {
+    const partASlider = document.getElementById('partA');
+    const partBSlider = document.getElementById('partB');
+    const partADisplay = document.getElementById('partAValue');
+    const partBDisplay = document.getElementById('partBValue');
+    
+    if (partASlider && partBSlider) {
+        partAValue = parseInt(partASlider.value);
+        partBValue = parseInt(partBSlider.value);
+        
+        if (partADisplay) partADisplay.textContent = partAValue;
+        if (partBDisplay) partBDisplay.textContent = partBValue;
+    }
+    
+    // Update visual bars
+    const total = partAValue + partBValue;
+    const percentA = (partAValue / total) * 100;
+    const percentB = (partBValue / total) * 100;
+    
+    const barA = document.getElementById('ratioBarA');
+    const barB = document.getElementById('ratioBarB');
+    
+    if (barA) barA.style.width = percentA + '%';
+    if (barB) barB.style.width = percentB + '%';
+    
+    // Update ratio display
+    const display = document.getElementById('ratioDisplay');
+    if (display) {
+        display.textContent = `${partAValue}:${partBValue}`;
+    }
+    
+    // Calculate simplified ratio
+    const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
+    const divisor = gcd(partAValue, partBValue);
+    const simplifiedA = partAValue / divisor;
+    const simplifiedB = partBValue / divisor;
+    
+    const simplified = document.getElementById('ratioSimplified');
+    if (simplified) {
+        if (simplifiedA !== partAValue || simplifiedB !== partBValue) {
+            simplified.textContent = `Simplified: ${simplifiedA}:${simplifiedB}`;
+            simplified.style.color = '#28a745';
+        } else {
+            simplified.textContent = 'Already simplified!';
+            simplified.style.color = '#FFD700';
+        }
+    }
+    
+    // Update examples
+    const examples = document.getElementById('ratioExamples');
+    if (examples) {
+        examples.innerHTML = `
+            <h4>🍹 Example: Making Juice</h4>
+            <p>If you use <strong>${partAValue} cups</strong> of Part A (juice),<br>you need <strong>${partBValue} cups</strong> of Part B (water)</p>
+            <p style="color: #FFD700;">Total: ${total} cups of mixed juice!</p>
+        `;
+    }
+}
+
+function resetRatio() {
+    document.getElementById('partA').value = 5;
+    document.getElementById('partB').value = 5;
+    initRatio();
+}
+
+// ===== ALGEBRA NUMBER LINE GAME =====
+let currentPosition = 0;
+let operationHistory = [];
+
+function initNumberLine() {
+    currentPosition = 0;
+    operationHistory = ['Start at 0'];
+    updateNumberLine();
+    drawNumberLabels();
+}
+
+function drawNumberLabels() {
+    const labelsContainer = document.getElementById('numberLabels');
+    if (!labelsContainer) return;
+    
+    labelsContainer.innerHTML = '';
+    for (let i = -20; i <= 20; i += 5) {
+        const label = document.createElement('div');
+        label.className = 'number-label';
+        label.textContent = i;
+        label.style.left = ((i + 20) / 40 * 100) + '%';
+        if (i === 0) label.style.fontWeight = 'bold';
+        labelsContainer.appendChild(label);
+    }
+}
+
+function moveNumberLine(amount) {
+    currentPosition += amount;
+    
+    // Keep within bounds
+    if (currentPosition > 20) currentPosition = 20;
+    if (currentPosition < -20) currentPosition = -20;
+    
+    // Add to history
+    const operation = amount > 0 ? `+${amount}` : `${amount}`;
+    operationHistory.push(operation);
+    if (operationHistory.length > 6) operationHistory.shift();
+    
+    updateNumberLine();
+}
+
+function updateNumberLine() {
+    const marker = document.getElementById('numberMarker');
+    const display = document.getElementById('currentNum');
+    const history = document.getElementById('operationHistory');
+    
+    if (!marker || !display) return;
+    
+    // Update marker position (map -20 to 20 onto 0% to 100%)
+    const percentage = ((currentPosition + 20) / 40 * 100);
+    marker.style.left = percentage + '%';
+    
+    // Update display
+    display.textContent = currentPosition;
+    
+    // Color based on value
+    if (currentPosition > 0) {
+        display.style.color = '#28a745';
+        marker.textContent = '🎯';
+    } else if (currentPosition < 0) {
+        display.style.color = '#ff6b6b';
+        marker.textContent = '❄️';
+    } else {
+        display.style.color = '#FFD700';
+        marker.textContent = '🧮';
+    }
+    
+    // Update history
+    if (history) {
+        const historyText = operationHistory.length > 1 
+            ? '<strong>Your Journey:</strong> ' + operationHistory.join(' → ')
+            : '<strong>Your Journey:</strong> Start at 0';
+        history.innerHTML = historyText;
+    }
+}
+
+function resetNumberLine() {
+    initNumberLine();
+}
+
+// ===== OLD ALGEBRA GAME (Keep for compatibility) =====
 let currentEquation = { a: 1, b: 3, c: 12 }; // represents ax + b = c
 
 function generateEquation() {
@@ -985,8 +1278,7 @@ function showShapeInfo(shape) {
 
 // Start game from learning section
 function startGameFromLearning() {
-    showSection('gameScreen');
-    startGame();
+    showSection('gameModeMenu');
 }
 
 // Initialize on load
