@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>7th Grade Math Tutor</title>
+    <title>Math Magic</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>🎯 7th Grade Math Tutor</h1>
+            <h1>🎯 Math-Magic</h1>
             <p>Learn math through fun and interactive games!</p>
             <div class="music-controls">
                 <button id="musicToggle" class="music-btn" onclick="toggleMusic()">
@@ -17,10 +17,82 @@
                 </button>
                 <input type="range" id="volumeControl" min="0" max="100" value="30" onchange="setVolume(this.value)">
             </div>
-            <div style="text-align: center; margin-top: 15px;">
+            <div style="text-align: center; margin-top: 15px; display: flex; gap: 10px; justify-content: center;">
                 <button class="btn-secondary" onclick="showSection('teacherDashboard')" style="padding: 8px 20px;">👨‍🏫 Teacher Dashboard</button>
+                <button class="btn-secondary" onclick="showSection('studentLogin')" style="padding: 8px 20px;">👨‍🎓 Student Login</button>
             </div>
         </header>
+
+        <!-- Student Login -->
+        <div id="studentLogin" class="section">
+            <h2>Student Login</h2>
+            <p style="text-align: center; color: #bbb; margin-bottom: 30px;">Select your class and name to view your assignments</p>
+            <div class="login-form">
+                <select id="studentClassSelect" class="modal-input" onchange="loadStudentsForLogin()">
+                    <option value="">Select Your Class</option>
+                </select>
+                <select id="studentNameSelect" class="modal-input">
+                    <option value="">Select Your Name</option>
+                </select>
+                <button class="btn-primary" onclick="studentLoginSubmit()">Login</button>
+                <button class="btn-secondary" onclick="showSection('mainMenu')">Back to Main Menu</button>
+            </div>
+        </div>
+
+        <!-- Student Dashboard -->
+        <div id="studentDashboard" class="section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 id="studentWelcome"></h2>
+                <button class="btn-secondary" onclick="studentLogout()">Logout</button>
+            </div>
+            
+            <div class="dashboard-tabs">
+                <button class="tab-btn active" onclick="switchStudentTab('assignments')">My Assignments</button>
+                <button class="tab-btn" onclick="switchStudentTab('completed')">Completed</button>
+                <button class="tab-btn" onclick="switchStudentTab('practice')">Practice Mode</button>
+            </div>
+
+            <!-- Student Assignments Tab -->
+            <div id="studentAssignmentsTab" class="dashboard-tab active">
+                <div id="studentAssignmentsList" class="assignments-list"></div>
+            </div>
+
+            <!-- Completed Tab -->
+            <div id="studentCompletedTab" class="dashboard-tab">
+                <div id="studentCompletedList" class="assignments-list"></div>
+            </div>
+
+            <!-- Practice Tab -->
+            <div id="studentPracticeTab" class="dashboard-tab">
+                <p style="color: #bbb; text-align: center; margin: 40px 0;">Choose a topic to practice without tracking</p>
+                <div class="topic-grid" style="max-width: 800px; margin: 0 auto;">
+                    <button class="topic-btn" onclick="startPracticeMode('algebra')">
+                        <span class="icon">📐</span>
+                        <h3>Algebra</h3>
+                    </button>
+                    <button class="topic-btn" onclick="startPracticeMode('geometry')">
+                        <span class="icon">📏</span>
+                        <h3>Geometry</h3>
+                    </button>
+                    <button class="topic-btn" onclick="startPracticeMode('fractions')">
+                        <span class="icon">🍕</span>
+                        <h3>Fractions</h3>
+                    </button>
+                    <button class="topic-btn" onclick="startPracticeMode('percentages')">
+                        <span class="icon">💯</span>
+                        <h3>Percentages</h3>
+                    </button>
+                    <button class="topic-btn" onclick="startPracticeMode('integers')">
+                        <span class="icon">➕➖</span>
+                        <h3>Integers</h3>
+                    </button>
+                    <button class="topic-btn" onclick="startPracticeMode('ratios')">
+                        <span class="icon">⚖️</span>
+                        <h3>Ratios</h3>
+                    </button>
+                </div>
+            </div>
+        </div>
 
         <!-- Teacher Dashboard -->
         <div id="teacherDashboard" class="section">
