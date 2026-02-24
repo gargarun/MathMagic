@@ -137,6 +137,29 @@ const questionBank = {
             { question: "If 5:8 = x:32, what is x?", answer: "20", options: ["15", "20", "25", "28"] },
             { question: "Speed ratio 60:80 simplified", answer: "3:4", options: ["1:2", "3:4", "4:5", "6:8"] }
         ]
+    },
+    nature: {
+        easy: [
+            { question: "How many petals does a daisy typically have?", answer: "34", options: ["12", "20", "34", "50"] },
+            { question: "What shape are honeycomb cells?", answer: "Hexagon", options: ["Square", "Circle", "Hexagon", "Triangle"] },
+            { question: "How many points does a snowflake have?", answer: "6", options: ["4", "5", "6", "8"] },
+            { question: "Butterflies have this type of symmetry", answer: "Mirror", options: ["Radial", "Mirror", "None", "Spiral"] },
+            { question: "Sunflower seeds arrange in a spiral pattern. True or False?", answer: "True", options: ["True", "False"] }
+        ],
+        medium: [
+            { question: "How many spirals in a pinecone? (Fibonacci number)", answer: "8 or 13", options: ["5 or 7", "8 or 13", "10 or 15", "12 or 16"] },
+            { question: "Tree branches follow which sequence?", answer: "Fibonacci", options: ["Random", "Arithmetic", "Fibonacci", "Geometric"] },
+            { question: "Nautilus shell grows in which spiral?", answer: "Logarithmic", options: ["Circular", "Logarithmic", "Linear", "Square"] },
+            { question: "Fibonacci sequence starts: 1, 1, 2, 3, 5, ?", answer: "8", options: ["6", "7", "8", "9"] },
+            { question: "What ratio is found in flower petals?", answer: "Golden Ratio", options: ["Pi", "Golden Ratio", "Square Root 2", "Euler's Number"] }
+        ],
+        hard: [
+            { question: "Golden ratio value (approximately)", answer: "1.618", options: ["1.414", "1.618", "2.718", "3.141"] },
+            { question: "Fibonacci sequence: 1,1,2,3,5,8,13,21,?", answer: "34", options: ["29", "32", "34", "38"] },
+            { question: "Fractals in nature repeat patterns at different ___", answer: "Scales", options: ["Times", "Scales", "Colors", "Speeds"] },
+            { question: "How many chambers in a nautilus shell cross-section?", answer: "Spiral chambers", options: ["3", "5", "Spiral chambers", "12"] },
+            { question: "Tree trunk diameter doubles, cross-section area increases by", answer: "4 times", options: ["2 times", "3 times", "4 times", "8 times"] }
+        ]
     }
 };
 

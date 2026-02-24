@@ -260,6 +260,38 @@ function loadGameInteractive() {
             </div>
         `;
         initRatio();
+    } else if (currentTopic === 'nature') {
+        gameInteractiveArea.innerHTML = `
+            <div class="game-interactive-container">
+                <h3 class="interactive-title">🌿 Fibonacci Garden</h3>
+                <div class="fibonacci-garden compact">
+                    <div class="garden-display compact">
+                        <div class="flower-card compact" onclick="showFlower(3)">
+                            <div class="flower-icon" style="font-size: 2.5em;">🌷</div>
+                            <p style="font-size: 0.8em;">3 petals</p>
+                        </div>
+                        <div class="flower-card compact" onclick="showFlower(5)">
+                            <div class="flower-icon" style="font-size: 2.5em;">🌼</div>
+                            <p style="font-size: 0.8em;">5 petals</p>
+                        </div>
+                        <div class="flower-card compact" onclick="showFlower(8)">
+                            <div class="flower-icon" style="font-size: 2.5em;">🌸</div>
+                            <p style="font-size: 0.8em;">8 petals</p>
+                        </div>
+                        <div class="flower-card compact" onclick="showFlower(13)">
+                            <div class="flower-icon" style="font-size: 2.5em;">🌺</div>
+                            <p style="font-size: 0.8em;">13 petals</p>
+                        </div>
+                    </div>
+                    <div class="fibonacci-display compact" id="fibonacciDisplay">
+                        <div class="fib-sequence compact" id="fibSequence">1, 1, 2, 3, 5, 8, 13...</div>
+                        <p class="fib-info compact" id="fibInfo">Click a flower!</p>
+                    </div>
+                    <canvas id="fibonacciCanvas" width="200" height="200" style="margin: 10px auto; display: block;"></canvas>
+                </div>
+            </div>
+        `;
+        initFibonacci();
     } else {
         gameInteractiveArea.innerHTML = '';
     }
@@ -615,6 +647,55 @@ const learningConcepts = {
                 </ul>
             </div>
         `
+    },
+    nature: {
+        title: "Math in Nature",
+        interactive: true,
+        content: `
+            <h3>Math is Everywhere in Nature! 🌿</h3>
+            <p>Nature is full of mathematical patterns, from the spirals in shells to the symmetry of flowers!</p>
+            
+            <div class="example-box">
+                <h4><span class="emoji">🌻</span>Fibonacci in Flowers</h4>
+                <p>Count the petals on flowers - they often follow Fibonacci numbers!</p>
+                <p>Lily: <strong>3 petals</strong></p>
+                <p>Buttercup: <strong>5 petals</strong></p>
+                <p>Daisy: <strong>34 petals</strong></p>
+                <p>Fibonacci sequence: 1, 1, 2, 3, 5, 8, 13, 21, 34...</p>
+            </div>
+            
+            <div class="example-box">
+                <h4><span class="emoji">🐚</span>Spirals in Shells</h4>
+                <p>Nautilus shells grow in a perfect logarithmic spiral!</p>
+                <p>Each chamber is <strong>1.618 times</strong> larger than the previous</p>
+                <p>This is called the <strong>Golden Ratio</strong> (φ = 1.618)</p>
+            </div>
+            
+            <div class="example-box">
+                <h4><span class="emoji">❄️</span>Snowflake Symmetry</h4>
+                <p>Every snowflake has <strong>6-fold symmetry</strong></p>
+                <p>This comes from the hexagonal structure of ice crystals</p>
+                <p>Honeycombs also use hexagons - they're the most efficient shape!</p>
+            </div>
+            
+            <div class="example-box">
+                <h4><span class="emoji">🌳</span>Fractals in Trees</h4>
+                <p>Tree branches split following a fractal pattern</p>
+                <p>Each branch looks like a mini version of the whole tree!</p>
+                <p>Ferns, coastlines, and clouds also show fractal patterns</p>
+            </div>
+            
+            <div class="key-points">
+                <h4>💡 Key Things to Remember:</h4>
+                <ul>
+                    <li>Fibonacci numbers appear in petals, spirals, and branches</li>
+                    <li>Golden ratio (φ ≈ 1.618) creates pleasing proportions</li>
+                    <li>Symmetry is common: mirror (butterflies), radial (flowers)</li>
+                    <li>Fractals repeat the same pattern at different scales</li>
+                    <li>Hexagons are nature's favorite efficient shape</li>
+                </ul>
+            </div>
+        `
     }
 };
 
@@ -803,6 +884,43 @@ function loadInteractiveElement(topic) {
                 </div>
             `;
             initRatio();
+            break;
+            
+        case 'nature':
+            interactiveArea.innerHTML = `
+                <h3 class="interactive-title">🌿 Fibonacci Garden!</h3>
+                <div class="fibonacci-garden">
+                    <p>Click the flowers to see their Fibonacci petal patterns!</p>
+                    <div class="garden-display">
+                        <div class="flower-card" onclick="showFlower(3)">
+                            <div class="flower-icon" style="font-size: 4em;">🌷</div>
+                            <p>Lily<br><span style="color: #FFD700;">3 petals</span></p>
+                        </div>
+                        <div class="flower-card" onclick="showFlower(5)">
+                            <div class="flower-icon" style="font-size: 4em;">🌼</div>
+                            <p>Buttercup<br><span style="color: #FFD700;">5 petals</span></p>
+                        </div>
+                        <div class="flower-card" onclick="showFlower(8)">
+                            <div class="flower-icon" style="font-size: 4em;">🌸</div>
+                            <p>Cosmos<br><span style="color: #FFD700;">8 petals</span></p>
+                        </div>
+                        <div class="flower-card" onclick="showFlower(13)">
+                            <div class="flower-icon" style="font-size: 4em;">🌺</div>
+                            <p>Aster<br><span style="color: #FFD700;">13 petals</span></p>
+                        </div>
+                    </div>
+                    <div class="fibonacci-display" id="fibonacciDisplay">
+                        <h4>Fibonacci Sequence:</h4>
+                        <div class="fib-sequence" id="fibSequence">1, 1, 2, 3, 5, 8, 13, 21, 34...</div>
+                        <p class="fib-info" id="fibInfo">Click a flower to explore!</p>
+                    </div>
+                    <div class="spiral-visual" id="spiralVisual">
+                        <canvas id="fibonacciCanvas" width="300" height="300"></canvas>
+                    </div>
+                    <button class="reset-btn" onclick="resetFibonacci()">🔄 Reset Garden</button>
+                </div>
+            `;
+            initFibonacci();
             break;
             
         default:
@@ -1279,6 +1397,116 @@ function showShapeInfo(shape) {
 // Start game from learning section
 function startGameFromLearning() {
     showSection('gameModeMenu');
+}
+
+// Fibonacci Garden Functions
+let currentFibNumber = 0;
+let fibSequenceArray = [1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89];
+
+function initFibonacci() {
+    drawFibonacciSpiral();
+}
+
+function showFlower(petals) {
+    currentFibNumber = petals;
+    const fibInfo = document.getElementById('fibInfo');
+    const fibSequence = document.getElementById('fibSequence');
+    
+    // Find position in Fibonacci sequence
+    const position = fibSequenceArray.indexOf(petals);
+    
+    if (position !== -1) {
+        // Highlight the number in sequence
+        let highlightedSeq = fibSequenceArray.map((num, idx) => {
+            if (num === petals) {
+                return `<span style="color: #FFD700; font-weight: bold; font-size: 1.3em;">${num}</span>`;
+            }
+            return num;
+        }).join(', ');
+        
+        fibSequence.innerHTML = highlightedSeq + '...';
+        
+        const flowerNames = {
+            3: 'Lily',
+            5: 'Buttercup',
+            8: 'Cosmos',
+            13: 'Aster'
+        };
+        
+        fibInfo.innerHTML = `
+            <strong>${flowerNames[petals]}</strong> has <span style="color: #FFD700;">${petals} petals</span> - 
+            a Fibonacci number at position ${position + 1}!
+        `;
+    }
+    
+    drawFibonacciSpiral(petals);
+}
+
+function drawFibonacciSpiral(highlight = null) {
+    const canvas = document.getElementById('fibonacciCanvas');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw spiral using Fibonacci numbers
+    let x = centerX;
+    let y = centerY;
+    let angle = 0;
+    const goldenAngle = 137.5 * (Math.PI / 180); // Golden angle in radians
+    
+    for (let i = 0; i < 50; i++) {
+        const radius = Math.sqrt(i + 1) * 8;
+        x = centerX + radius * Math.cos(angle);
+        y = centerY + radius * Math.sin(angle);
+        
+        // Draw petals
+        ctx.beginPath();
+        ctx.arc(x, y, 5, 0, 2 * Math.PI);
+        
+        // Highlight specific Fibonacci number
+        if (highlight && i < highlight) {
+            ctx.fillStyle = '#FFD700';
+        } else if (i < 8) {
+            ctx.fillStyle = '#4CAF50';
+        } else {
+            ctx.fillStyle = '#81C784';
+        }
+        
+        ctx.fill();
+        
+        // Add number labels for Fibonacci positions
+        if ([1, 2, 3, 5, 8, 13, 21].includes(i)) {
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 10px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(i.toString(), x, y);
+        }
+        
+        angle += goldenAngle;
+    }
+    
+    // Draw center
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, 8, 0, 2 * Math.PI);
+    ctx.fillStyle = '#FF9800';
+    ctx.fill();
+}
+
+function resetFibonacci() {
+    currentFibNumber = 0;
+    const fibInfo = document.getElementById('fibInfo');
+    const fibSequence = document.getElementById('fibSequence');
+    
+    fibSequence.innerHTML = '1, 1, 2, 3, 5, 8, 13, 21, 34...';
+    fibInfo.textContent = 'Click a flower to explore!';
+    
+    drawFibonacciSpiral();
 }
 
 // Initialize on load

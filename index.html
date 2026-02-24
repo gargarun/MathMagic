@@ -181,6 +181,11 @@
                     <h3>Ratios</h3>
                     <p>Comparing Quantities</p>
                 </button>
+                <button class="topic-btn" data-topic="nature">
+                    <span class="icon">🌿</span>
+                    <h3>Math in Nature</h3>
+                    <p>Patterns Around Us</p>
+                </button>
             </div>
         </div>
 
@@ -195,7 +200,6 @@
                 <!-- Interactive elements will be loaded here -->
             </div>
             <div class="learning-actions">
-                <button class="btn-primary" onclick="startGameFromLearning()">Start Playing!</button>
                 <button class="btn-secondary" onclick="showSection('gameModeMenu')">Back to Menu</button>
             </div>
         </div>
@@ -204,13 +208,6 @@
         <div id="gameModeMenu" class="section">
             <button class="back-btn" onclick="showSection('mainMenu')">← Back</button>
             <h2 id="topicTitle">Topic</h2>
-            
-            <div style="text-align: center; margin-bottom: 20px;">
-                <button class="btn-primary" onclick="showLearningConcepts()" style="font-size: 1.1em; padding: 15px 30px;">
-                    📚 Learn First (Interactive Games!)
-                </button>
-            </div>
-            
             <div class="game-modes">
                 <button class="mode-btn" data-mode="quiz">
                     <span class="icon">❓</span>
@@ -249,6 +246,9 @@
                     <span id="scoreDisplay">Score: 0</span>
                     <span id="timerDisplay">Time: 0:00</span>
                 </div>
+            </div>
+            <div id="gameInteractiveArea" class="game-interactive-area">
+                <!-- Interactive games (algebra, geometry, etc) appear here -->
             </div>
             <div id="gameContent">
                 <!-- Game content will be dynamically loaded here -->
