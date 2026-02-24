@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>7th Grade Math Tutor</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎯 7th Grade Math Tutor</h1>
+            <p>Learn math through fun and interactive games!</p>
+            <div class="music-controls">
+                <button id="musicToggle" class="music-btn" onclick="toggleMusic()">
+                    🎵 Music: ON
+                </button>
+                <input type="range" id="volumeControl" min="0" max="100" value="30" onchange="setVolume(this.value)">
+            </div>
+            <div style="text-align: center; margin-top: 15px;">
+                <button class="btn-secondary" onclick="showSection('teacherDashboard')" style="padding: 8px 20px;">👨‍🏫 Teacher Dashboard</button>
+            </div>
+        </header>
+
+        <!-- Teacher Dashboard -->
+        <div id="teacherDashboard" class="section">
+            <button class="back-btn" onclick="showSection('mainMenu')">← Back to Main Menu</button>
+            <h2>Teacher Dashboard</h2>
+            <div class="dashboard-tabs">
+                <button class="tab-btn active" onclick="switchDashboardTab('classes')">Classes</button>
+                <button class="tab-btn" onclick="switchDashboardTab('assignments')">Assignments</button>
+                <button class="tab-btn" onclick="switchDashboardTab('reports')">Reports</button>
+            </div>
+            
+            <!-- Classes Tab -->
+            <div id="classesTab" class="dashboard-tab active">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3>My Classes</h3>
+                    <button class="btn-primary" onclick="showAddClassModal()">+ Add Class</button>
+                </div>
+                <div id="classList" class="class-list"></div>
+            </div>
+            
+            <!-- Assignments Tab -->
+            <div id="assignmentsTab" class="dashboard-tab">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3>Quiz Assignments</h3>
+                    <button class="btn-primary" onclick="showCreateAssignmentModal()">+ Create Assignment</button>
+                </div>
+                <div id="assignmentsList" class="assignments-list"></div>
+            </div>
+            
+            <!-- Reports Tab -->
+            <div id="reportsTab" class="dashboard-tab">
+                <h3>Performance Reports</h3>
+                <div id="reportsList" class="reports-list"></div>
+            </div>
+        </div>
+
+        <!-- Class Detail View -->
+        <div id="classDetailView" class="section">
+            <button class="back-btn" onclick="showSection('teacherDashboard'); switchDashboardTab('classes')">← Back to Classes</button>
+            <div id="classDetailHeader" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 id="classDetailName"></h2>
+                <button class="btn-secondary" onclick="showAddStudentModal()">+ Add Student</button>
+            </div>
+            <div id="studentsList" class="students-list"></div>
+        </div>
+
+        <!-- Student Performance View -->
+        <div id="studentPerformanceView" class="section">
+            <button class="back-btn" onclick="goBackToClassDetail()">← Back to Class</button>
+            <h2 id="studentPerformanceName"></h2>
+            <div id="studentPerformanceContent" class="performance-content"></div>
+            <button class="btn-primary" onclick="sharePerformanceReport()">📱 Share on WhatsApp</button>
+        </div>
+
+        <!-- Main Menu -->
+        <div id="mainMenu" class="section active">
+            <h2>Choose a Topic</h2>
+            <div class="topic-grid">
+                <button class="topic-btn" data-topic="algebra">
+                    <span class="icon">📐</span>
+                    <h3>Algebra</h3>
+                    <p>Variables & Equations</p>
+                </button>
+                <button class="topic-btn" data-topic="geometry">
+                    <span class="icon">📏</span>
+                    <h3>Geometry</h3>
+                    <p>Shapes & Angles</p>
+                </button>
+                <button class="topic-btn" data-topic="fractions">
+                    <span class="icon">🍕</span>
+                    <h3>Fractions</h3>
+                    <p>Parts of a Whole</p>
+                </button>
+                <button class="topic-btn" data-topic="percentages">
+                    <span class="icon">💯</span>
+                    <h3>Percentages</h3>
+                    <p>Out of 100</p>
+                </button>
+                <button class="topic-btn" data-topic="integers">
+                    <span class="icon">➕➖</span>
+                    <h3>Integers</h3>
+                    <p>Positive & Negative</p>
+                </button>
+                <button class="topic-btn" data-topic="ratios">
+                    <span class="icon">⚖️</span>
+                    <h3>Ratios</h3>
+                    <p>Comparing Quantities</p>
+                </button>
+            </div>
+        </div>
+
+        <!-- Learning Concepts -->
+        <div id="learningSection" class="section">
+            <button class="back-btn" onclick="showSection('gameModeMenu')">← Back</button>
+            <h2 id="learningTitle">Learn the Concept</h2>
+            <div id="learningContent" class="learning-content">
+                <!-- Dynamic learning content will be loaded here -->
+            </div>
+            <div id="interactiveArea" class="interactive-area">
+                <!-- Interactive elements will be loaded here -->
+            </div>
+            <div class="learning-actions">
+                <button class="btn-primary" onclick="startGameFromLearning()">Start Playing!</button>
+                <button class="btn-secondary" onclick="showSection('gameModeMenu')">Back to Menu</button>
+            </div>
+        </div>
+
+        <!-- Game Mode Selection -->
+        <div id="gameModeMenu" class="section">
+            <button class="back-btn" onclick="showSection('mainMenu')">← Back</button>
+            <h2 id="topicTitle">Topic</h2>
+            <div class="game-modes">
+                <button class="mode-btn" data-mode="quiz">
+                    <span class="icon">❓</span>
+                    <h3>Quiz Mode</h3>
+                    <p>Answer questions and score points</p>
+                </button>
+                <button class="mode-btn" data-mode="puzzle">
+                    <span class="icon">🧩</span>
+                    <h3>Puzzle Mode</h3>
+                    <p>Solve math puzzles</p>
+                </button>
+                <button class="mode-btn" data-mode="challenge">
+                    <span class="icon">🏆</span>
+                    <h3>Challenge Mode</h3>
+                    <p>Timed challenges</p>
+                </button>
+            </div>
+            <div class="difficulty-selector">
+                <h3>Choose Difficulty:</h3>
+                <div class="difficulty-btns">
+                    <button class="diff-btn active" data-difficulty="easy">Easy</button>
+                    <button class="diff-btn" data-difficulty="medium">Medium</button>
+                    <button class="diff-btn" data-difficulty="hard">Hard</button>
+                </div>
+            </div>
+            <div class="learn-concept-btn-container">
+                <button class="btn-learn" onclick="showLearningConcepts()">📚 Learn the Concept First</button>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="gameScreen" class="section">
+            <div class="game-header">
+                <button class="back-btn" onclick="showSection('gameModeMenu')">← Back</button>
+                <div class="game-stats">
+                    <span id="scoreDisplay">Score: 0</span>
+                    <span id="timerDisplay">Time: 0:00</span>
+                </div>
+            </div>
+            <div id="gameContent">
+                <!-- Game content will be dynamically loaded here -->
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="resultsScreen" class="section">
+            <h2>🎉 Great Job!</h2>
+            <div class="results-content">
+                <div class="score-circle">
+                    <span id="finalScore">0</span>
+                    <p>points</p>
+                </div>
+                <div class="results-details">
+                    <p><strong>Topic:</strong> <span id="resultTopic"></span></p>
+                    <p><strong>Mode:</strong> <span id="resultMode"></span></p>
+                    <p><strong>Difficulty:</strong> <span id="resultDifficulty"></span></p>
+                    <p><strong>Correct Answers:</strong> <span id="resultCorrect"></span></p>
+                    <p><strong>Time Taken:</strong> <span id="resultTime"></span></p>
+                </div>
+                <div class="results-actions">
+                    <button class="btn-primary" onclick="playAgain()">Play Again</button>
+                    <button class="btn-secondary" onclick="showSection('mainMenu')">Main Menu</button>
+                    <button class="btn-whatsapp" onclick="shareOnWhatsApp()">
+                        📱 Share on WhatsApp
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Tracker -->
+        <div class="progress-tracker">
+            <h3>Your Progress</h3>
+            <div id="progressBars"></div>
+        </div>
+
+        <!-- Modals -->
+        <div id="modalOverlay" class="modal-overlay" onclick="closeModal()"></div>
+        
+        <!-- Add Class Modal -->
+        <div id="addClassModal" class="modal">
+            <h3>Add New Class</h3>
+            <input type="text" id="className" placeholder="Class Name (e.g., Grade 7-A)" class="modal-input">
+            <textarea id="classDescription" placeholder="Description (optional)" class="modal-textarea"></textarea>
+            <div class="modal-actions">
+                <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn-primary" onclick="saveClass()">Save</button>
+            </div>
+        </div>
+
+        <!-- Add Student Modal -->
+        <div id="addStudentModal" class="modal">
+            <h3>Add Student</h3>
+            <input type="text" id="studentName" placeholder="Student Name" class="modal-input">
+            <input type="email" id="studentEmail" placeholder="Email (optional)" class="modal-input">
+            <input type="tel" id="studentPhone" placeholder="Parent's WhatsApp Number" class="modal-input">
+            <div class="modal-actions">
+                <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn-primary" onclick="saveStudent()">Save</button>
+            </div>
+        </div>
+
+        <!-- Create Assignment Modal -->
+        <div id="createAssignmentModal" class="modal">
+            <h3>Create Quiz Assignment</h3>
+            <select id="assignmentClass" class="modal-input">
+                <option value="">Select Class</option>
+            </select>
+            <select id="assignmentTopic" class="modal-input">
+                <option value="algebra">Algebra</option>
+                <option value="geometry">Geometry</option>
+                <option value="fractions">Fractions</option>
+                <option value="percentages">Percentages</option>
+                <option value="integers">Integers</option>
+                <option value="ratios">Ratios</option>
+            </select>
+            <select id="assignmentDifficulty" class="modal-input">
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+            </select>
+            <input type="date" id="assignmentDueDate" class="modal-input">
+            <div id="studentSelection" class="student-selection"></div>
+            <div class="modal-actions">
+                <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn-primary" onclick="saveAssignment()">Create Assignment</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="database.js"></script>
+    <script src="app.js"></script>
+    <script src="games.js"></script>
+    <script src="teacher.js"></script>
+</body>
+</html>
