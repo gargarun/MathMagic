@@ -25,10 +25,11 @@ class Database {
         try {
             const jsonData = JSON.stringify(data);
             localStorage.setItem(key, jsonData);
-            console.log(`Saved ${key}:`, Array.isArray(data) ? `${data.length} items` : 'object');
+            const itemCount = Array.isArray(data) ? data.length : 'N/A';
+            console.log(`✓ Saved ${key}: ${itemCount} items`);
             return true;
         } catch (error) {
-            console.error('Save error:', error);
+            console.error('✗ Save error for', key, ':', error.message);
             return false;
         }
     }
@@ -39,11 +40,12 @@ class Database {
             const data = localStorage.getItem(key);
             const parsed = data ? JSON.parse(data) : null;
             if (parsed) {
-                console.log(`Loaded ${key}:`, Array.isArray(parsed) ? `${parsed.length} items` : 'object');
+                const itemCount = Array.isArray(parsed) ? parsed.length : 'N/A';
+                console.log(`✓ Loaded ${key}: ${itemCount} items`);
             }
             return parsed;
         } catch (error) {
-            console.error('Get error:', error);
+            console.error('✗ Get error for', key, ':', error.message);
             return null;
         }
     }
