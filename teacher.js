@@ -73,8 +73,12 @@ function closeModal() {
 
 // Class Management
 function saveClass() {
+    console.log('saveClass() called');
+    
     const name = document.getElementById('className').value.trim();
     const description = document.getElementById('classDescription').value.trim();
+    
+    console.log('Class data:', { name, description });
     
     if (!name) {
         alert('Please enter a class name');
@@ -86,7 +90,11 @@ function saveClass() {
         description
     };
     
-    if (db.saveClass(classData)) {
+    console.log('Attempting to save class...');
+    const saved = db.saveClass(classData);
+    console.log('Save result:', saved);
+    
+    if (saved) {
         closeModal();
         loadClasses();
     } else {
