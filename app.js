@@ -358,18 +358,32 @@ function endGame() {
     }
     
     // Display results
-    document.getElementById('finalScore').textContent = score;
-    document.getElementById('resultTopic').textContent = currentTopic.charAt(0).toUpperCase() + currentTopic.slice(1);
-    document.getElementById('resultMode').textContent = currentMode.charAt(0).toUpperCase() + currentMode.slice(1);
-    document.getElementById('resultDifficulty').textContent = currentDifficulty.charAt(0).toUpperCase() + currentDifficulty.slice(1);
-    document.getElementById('resultCorrect').textContent = `${correctAnswers} / ${totalQuestions}`;
-    document.getElementById('resultTime').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    const finalScore = document.getElementById('finalScore');
+    const resultTopic = document.getElementById('resultTopic');
+    const resultMode = document.getElementById('resultMode');
+    const resultDifficulty = document.getElementById('resultDifficulty');
+    const resultCorrect = document.getElementById('resultCorrect');
+    const resultTime = document.getElementById('resultTime');
+    
+    if (finalScore) finalScore.textContent = score;
+    if (resultTopic) resultTopic.textContent = currentTopic.charAt(0).toUpperCase() + currentTopic.slice(1);
+    if (resultMode) resultMode.textContent = currentMode.charAt(0).toUpperCase() + currentMode.slice(1);
+    if (resultDifficulty) resultDifficulty.textContent = currentDifficulty.charAt(0).toUpperCase() + currentDifficulty.slice(1);
+    if (resultCorrect) resultCorrect.textContent = `${correctAnswers} / ${totalQuestions}`;
+    if (resultTime) resultTime.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
     
     // Show assignment completion message if applicable
     if (isAssignment) {
-        const accuracy = Math.round((correctAnswers / totalQuestions) * 100);
-        document.getElementById('resultsScreen').querySelector('.results-summary').innerHTML += 
-            `<p style="color: #28a745; font-weight: bold; margin-top: 20px;">✅ Assignment submitted successfully!</p>`;
+        const resultsScreen = document.getElementById('resultsScreen');
+        const resultsDetails = resultsScreen ? resultsScreen.querySelector('.results-details') : null;
+        if (resultsDetails) {
+            const accuracy = Math.round((correctAnswers / totalQuestions) * 100);
+            const existingMsg = resultsDetails.querySelector('.assignment-success-msg');
+            if (!existingMsg) {
+                resultsDetails.innerHTML += 
+                    `<p class="assignment-success-msg" style="color: #28a745; font-weight: bold; margin-top: 20px;">✅ Assignment submitted successfully!</p>`;
+            }
+        }
     }
     
     showSection('resultsScreen');
