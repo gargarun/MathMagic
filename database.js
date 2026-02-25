@@ -187,7 +187,9 @@ class Database {
                 averageScore: 0,
                 totalCorrect: 0,
                 totalQuestions: 0,
-                topicBreakdown: {}
+                accuracy: 0,
+                topicBreakdown: {},
+                recentResults: []
             };
         }
 

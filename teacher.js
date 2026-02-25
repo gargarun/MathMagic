@@ -447,7 +447,7 @@ function viewStudentPerformance(classId, studentId) {
         
         <div class="topic-breakdown">
             <h3>Topic-wise Performance</h3>
-            ${Object.entries(performance.topicBreakdown).map(([topic, data]) => `
+            ${Object.entries(performance.topicBreakdown || {}).map(([topic, data]) => `
                 <div class="topic-perf-card">
                     <h4>${topic.charAt(0).toUpperCase() + topic.slice(1)}</h4>
                     <p>Quizzes: ${data.quizzes}</p>
@@ -459,14 +459,14 @@ function viewStudentPerformance(classId, studentId) {
         
         <div class="recent-results">
             <h3>Recent Quiz Results</h3>
-            ${performance.recentResults.map(result => `
+            ${(performance.recentResults || []).length > 0 ? performance.recentResults.map(result => `
                 <div class="result-item">
                     <span><strong>${result.topic}</strong> - ${result.mode} (${result.difficulty})</span>
                     <span>Score: ${result.score}</span>
                     <span>${result.correctAnswers}/${result.totalQuestions} correct</span>
                     <span class="result-date">${new Date(result.completedAt).toLocaleDateString()}</span>
                 </div>
-            `).join('')}
+            `).join('') : '<p style="text-align: center; color: #aaa; padding: 20px;">No quiz results yet</p>'}
         </div>
     `;
     
