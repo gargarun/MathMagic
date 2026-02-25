@@ -23,7 +23,9 @@ class Database {
     // Generic save method
     save(key, data) {
         try {
-            localStorage.setItem(key, JSON.stringify(data));
+            const jsonData = JSON.stringify(data);
+            localStorage.setItem(key, jsonData);
+            console.log(`Saved ${key}:`, Array.isArray(data) ? `${data.length} items` : 'object');
             return true;
         } catch (error) {
             console.error('Save error:', error);
@@ -35,7 +37,11 @@ class Database {
     get(key) {
         try {
             const data = localStorage.getItem(key);
-            return data ? JSON.parse(data) : null;
+            const parsed = data ? JSON.parse(data) : null;
+            if (parsed) {
+                console.log(`Loaded ${key}:`, Array.isArray(parsed) ? `${parsed.length} items` : 'object');
+            }
+            return parsed;
         } catch (error) {
             console.error('Get error:', error);
             return null;

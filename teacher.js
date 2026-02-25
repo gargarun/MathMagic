@@ -290,16 +290,44 @@ function loadAssignments() {
             ? Math.round((results.length / assignment.studentIds.length) * 100)
             : 0;
         
+        // Get student completion details
+        const studentDetails = assignment.studentIds.map(studentId => {
+            const student = db.getStudent(assignment.classId, studentId);
+            const studentResult = results.find(r => r.studentId === studentId);
+            
+            if (studentResult) {
+                const accuracy = Math.round((studentResult.correctAnswers / studentResult.totalQuestions) * 100);
+                return `
+                    <div class="student-progress completed">
+                        <span>✅ ${student ? student.name : 'Unknown'}</span>
+                        <span class="progress-badge" style="background: #28a745;">${accuracy}% (${studentResult.score} pts)</span>
+                    </div>
+                `;
+            } else {
+                return `
+                    <div class="student-progress pending">
+                        <span>⏳ ${student ? student.name : 'Unknown'}</span>
+                        <span class="progress-badge" style="background: #ffc107; color: #333;">Pending</span>
+                    </div>
+                `;
+            }
+        }).join('');
+        
         return `
-            <div class="assignment-card">
+            <div class="assignment-card" style="margin-bottom: 20px;">
                 <div class="assignment-header">
-                    <h4>${assignment.topic.charAt(0).toUpperCase() + assignment.topic.slice(1)} - ${assignment.difficulty}</h4>
+                    <h4>${assignment.topic.charAt(0).toUpperCase() + assignment.topic.slice(1)} - ${assignment.difficulty.charAt(0).toUpperCase() + assignment.difficulty.slice(1)}</h4>
                     <span class="assignment-status">${assignment.status}</span>
                 </div>
                 <p><strong>Class:</strong> ${classData ? classData.name : 'Unknown'}</p>
                 <p><strong>Students:</strong> ${assignment.studentIds.length}</p>
-                <p><strong>Completed:</strong> ${results.length} / ${assignment.studentIds.length} (${completionRate}%)</p>
+                <p><strong>Completed:</strong> ${results.length} / ${assignment.studentIds.length} (<span style="color: ${completionRate === 100 ? '#28a745' : '#ffc107'}; font-weight: bold;">${completionRate}%</span>)</p>
                 ${assignment.dueDate ? `<p><strong>Due:</strong> ${new Date(assignment.dueDate).toLocaleDateString()}</p>` : ''}
+                
+                <div class="student-progress-list" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #444;">
+                    <p style="font-weight: bold; margin-bottom: 10px; color: #FFD700;">Student Progress:</p>
+                    ${studentDetails}
+                </div>
             </div>
         `;
     }).join('');
@@ -432,14 +460,264 @@ Keep up the great work! 🌟
     window.open(whatsappUrl, '_blank');
 }
 
+// ===== STUDENT FUNCTIONALITY =====
+
+let loggedInStudent = null;
+let loggedInClass = null;
+
+// Student Login
+function loadStudentsForLogin() {
+    const classId = document.getElementById('studentClassSelect').value;
+    const studentSelect = document.getElementById('studentNameSelect');
+    
+    if (!classId) {
+        studentSelect.innerHTML = '<option value="">Select Your Name</option>';
+        return;
+    }
+    
+    const students = db.getStudentsByClass(classId);
+    studentSelect.innerHTML = '<option value="">Select Your Name</option>' +
+        students.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+}
+
+function studentLoginSubmit() {
+    const classId = document.getElementById('studentClassSelect').value;
+    const studentId = document.getElementById('studentNameSelect').value;
+    
+    if (!classId || !studentId) {
+        alert('Please select both class and your name');
+        return;
+    }
+    
+    loggedInClass = classId;
+    loggedInStudent = studentId;
+    
+    // Store login session
+    sessionStorage.setItem('loggedInStudent', studentId);
+    sessionStorage.setItem('loggedInClass', classId);
+    
+    const student = db.getStudent(classId, studentId);
+    const classData = db.getClass(classId);
+    
+    if (!student || !classData) {
+        alert('Student or class data not found. Please try again.');
+        console.error('Failed to load student or class data');\n        return;
+    }
+    
+    console.log('Student logged in:', student.name, 'from', classData.name);
+    
+    document.getElementById('studentWelcome').textContent = `Welcome, ${student.name}! (${classData.name})`;
+    
+    showSection('studentDashboard');
+    switchStudentTab('assignments');
+}
+
+function studentLogout() {
+    loggedInStudent = null;
+    loggedInClass = null;
+    showSection('studentLogin');
+}
+
+// Student Dashboard Tabs
+function switchStudentTab(tabName) {
+    // Remove active from all tabs and buttons
+    document.querySelectorAll('#studentDashboard .dashboard-tab').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('#studentDashboard .tab-btn').forEach(btn => btn.classList.remove('active'));
+    
+    // Activate selected tab
+    const tabId = `student${tabName.charAt(0).toUpperCase() + tabName.slice(1)}Tab`;
+    document.getElementById(tabId).classList.add('active');
+    
+    // Activate corresponding button
+    event.target.classList.add('active');
+    
+    // Load appropriate content
+    if (tabName === 'assignments') {
+        loadStudentAssignments();
+    } else if (tabName === 'completed') {
+        loadStudentCompleted();
+    }
+    // practice tab doesn't need loading, it's static
+}
+
+// Load Student's Assignments
+function loadStudentAssignments() {
+    if (!loggedInStudent) return;
+    
+    const allAssignments = db.getAllAssignments();
+    const studentAssignments = allAssignments.filter(a => 
+        a.studentIds.includes(loggedInStudent) && a.status === 'active'
+    );
+    
+    const results = db.getResultsByStudent(loggedInStudent);
+    
+    // Filter out completed assignments
+    const pendingAssignments = studentAssignments.filter(assignment => {
+        return !results.some(r => r.assignmentId === assignment.id);
+    });
+    
+    const list = document.getElementById('studentAssignmentsList');
+    
+    if (pendingAssignments.length === 0) {
+        list.innerHTML = '<p style="text-align: center; color: #aaa; padding: 40px;">🎉 No pending assignments! Great job!</p>';
+        return;
+    }
+    
+    list.innerHTML = pendingAssignments.map(assignment => {
+        const dueDate = assignment.dueDate ? new Date(assignment.dueDate) : null;
+        const isOverdue = dueDate && dueDate < new Date();
+        
+        return `
+            <div class="assignment-card student-assignment-card">
+                <div class="assignment-header">
+                    <h4>${assignment.topic.charAt(0).toUpperCase() + assignment.topic.slice(1)} Quiz</h4>
+                    ${isOverdue ? '<span class="assignment-status" style="background: #dc3545;">Overdue</span>' : '<span class="assignment-status">Pending</span>'}
+                </div>
+                <p><strong>Difficulty:</strong> ${assignment.difficulty.charAt(0).toUpperCase() + assignment.difficulty.slice(1)}</p>
+                ${assignment.dueDate ? `<p><strong>Due:</strong> ${dueDate.toLocaleDateString()}</p>` : ''}
+                <button class="btn-primary" onclick="startAssignment('${assignment.id}')">Start Assignment</button>
+            </div>
+        `;
+    }).join('');
+}
+
+// Load Student's Completed Assignments
+function loadStudentCompleted() {
+    if (!loggedInStudent) return;
+    
+    const results = db.getResultsByStudent(loggedInStudent);
+    const assignmentResults = results.filter(r => r.assignmentId);
+    
+    const list = document.getElementById('studentCompletedList');
+    
+    if (assignmentResults.length === 0) {
+        list.innerHTML = '<p style="text-align: center; color: #aaa; padding: 40px;">No completed assignments yet.</p>';
+        return;
+    }
+    
+    list.innerHTML = assignmentResults.map(result => {
+        const assignment = db.getAllAssignments().find(a => a.id === result.assignmentId);
+        const percentage = Math.round((result.correctAnswers / result.totalQuestions) * 100);
+        
+        return `
+            <div class="assignment-card">
+                <div class="assignment-header">
+                    <h4>${result.topic.charAt(0).toUpperCase() + result.topic.slice(1)} Quiz</h4>
+                    <span class="assignment-status" style="background: #28a745;">Completed</span>
+                </div>
+                <p><strong>Score:</strong> ${result.score} points</p>
+                <p><strong>Accuracy:</strong> ${percentage}% (${result.correctAnswers}/${result.totalQuestions})</p>
+                <p><strong>Completed:</strong> ${new Date(result.completedAt).toLocaleDateString()}</p>
+                ${assignment && assignment.dueDate ? 
+                    `<p><strong>Due Date:</strong> ${new Date(assignment.dueDate).toLocaleDateString()}</p>` : ''}
+            </div>
+        `;
+    }).join('');
+}
+
+// Start Assignment
+function startAssignment(assignmentId) {
+    const assignment = db.getAllAssignments().find(a => a.id === assignmentId);
+    
+    if (!assignment) {
+        alert('Assignment not found');
+        return;
+    }
+    
+    // Set game state for assignment
+    gameState.studentId = loggedInStudent;
+    gameState.classId = loggedInClass;
+    gameState.assignmentId = assignmentId;
+    
+    // Set topic, mode, and difficulty from assignment
+    currentTopic = assignment.topic;
+    currentMode = 'quiz'; // Assignments are always quiz mode
+    currentDifficulty = assignment.difficulty;
+    
+    // Start the game
+    showSection('gameModeMenu');
+    document.getElementById('topicTitle').textContent = assignment.topic.charAt(0).toUpperCase() + assignment.topic.slice(1);
+    
+    // Auto-start the game
+    setTimeout(() => {
+        startGame();
+    }, 100);
+}
+
+// Practice Mode (no tracking)
+function startPracticeMode(topic) {
+    gameState.studentId = loggedInStudent;
+    gameState.classId = loggedInClass;
+    gameState.assignmentId = null; // No assignment = practice mode
+    
+    currentTopic = topic;
+    showSection('gameModeMenu');
+    document.getElementById('topicTitle').textContent = topic.charAt(0).toUpperCase() + topic.slice(1);
+}
+
+// Override endGame to return to student dashboard
+const originalEndGame = endGame;
+window.endGameOverride = function() {
+    originalEndGame();
+    
+    // If student is logged in and completed an assignment, show completion message
+    if (loggedInStudent && gameState.assignmentId) {
+        setTimeout(() => {
+            alert('✅ Assignment submitted successfully!');
+            showSection('studentDashboard');
+            switchStudentTab('completed');
+            gameState.assignmentId = null;
+        }, 2000);
+    }
+};
+
 // Initialize teacher dashboard when DOM loads
 document.addEventListener('DOMContentLoaded', () => {
+    // Verify database is accessible
+    if (!window.db) {
+        console.error('Database not initialized!');
+        return;
+    }
+    
+    console.log('Database initialized. Classes stored:', db.getAllClasses().length);
+    
+    // Populate class dropdown for student login
+    const studentClassSelect = document.getElementById('studentClassSelect');
+    if (studentClassSelect) {
+        const classes = db.getAllClasses();
+        studentClassSelect.innerHTML = '<option value="">Select Your Class</option>' +
+            classes.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+    }
+    
+    // Restore student session if exists
+    const savedStudentId = sessionStorage.getItem('loggedInStudent');
+    const savedClassId = sessionStorage.getItem('loggedInClass');
+    
+    if (savedStudentId && savedClassId) {
+        const student = db.getStudent(savedClassId, savedStudentId);
+        const classData = db.getClass(savedClassId);
+        
+        if (student && classData) {
+            loggedInStudent = savedStudentId;
+            loggedInClass = savedClassId;
+            console.log('Restored student session:', student.name);
+        } else {
+            // Clear invalid session
+            sessionStorage.removeItem('loggedInStudent');
+            sessionStorage.removeItem('loggedInClass');
+        }
+    }
+    
     // Auto-load classes when dashboard is opened
     const dashboardObserver = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
             if (mutation.target.id === 'teacherDashboard' && 
                 mutation.target.classList.contains('active')) {
                 loadClasses();
+            }
+            if (mutation.target.id === 'studentDashboard' && 
+                mutation.target.classList.contains('active')) {
+                loadStudentAssignments();
             }
         });
     });
@@ -448,4 +726,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (dashboard) {
         dashboardObserver.observe(dashboard, { attributes: true, attributeFilter: ['class'] });
     }
+    
+    const studentDashboard = document.getElementById('studentDashboard');
+    if (studentDashboard) {
+        dashboardObserver.observe(studentDashboard, { attributes: true, attributeFilter: ['class'] });
+    }
 });
+
