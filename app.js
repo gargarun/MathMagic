@@ -139,6 +139,11 @@ function showSection(sectionId) {
         section.classList.remove('active');
     });
     document.getElementById(sectionId).classList.add('active');
+    
+    // Refresh student login dropdown when showing student login
+    if (sectionId === 'studentLogin' && typeof refreshStudentLoginDropdown === 'function') {
+        refreshStudentLoginDropdown();
+    }
 }
 
 // Start game

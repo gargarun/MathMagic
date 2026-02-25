@@ -27,6 +27,18 @@ window.studentLogout = studentLogout;
 window.switchStudentTab = switchStudentTab;
 window.startAssignment = startAssignment;
 window.startPracticeMode = startPracticeMode;
+window.refreshStudentLoginDropdown = refreshStudentLoginDropdown;
+
+// Refresh student login dropdown
+function refreshStudentLoginDropdown() {
+    const studentClassSelect = document.getElementById('studentClassSelect');
+    if (studentClassSelect && window.db) {
+        const classes = db.getAllClasses();
+        console.log('Refreshing student login dropdown. Classes found:', classes.length);
+        studentClassSelect.innerHTML = '<option value="">Select Your Class</option>' +
+            classes.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+    }
+}
 
 // Dashboard Tab Switching
 function switchDashboardTab(tabName) {
