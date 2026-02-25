@@ -2,6 +2,8 @@
 
 let currentClassId = null;
 let currentStudentId = null;
+let loggedInStudent = null;
+let loggedInClass = null;
 
 // Make functions globally accessible
 window.switchDashboardTab = switchDashboardTab;
@@ -506,9 +508,6 @@ Keep up the great work! 🌟
 }
 
 // ===== STUDENT FUNCTIONALITY =====
-
-let loggedInStudent = null;
-let loggedInClass = null;
 
 // Student Login
 function loadStudentsForLogin() {
