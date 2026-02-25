@@ -526,8 +526,12 @@ function loadStudentsForLogin() {
 }
 
 function studentLoginSubmit() {
+    console.log('studentLoginSubmit() called');
+    
     const classId = document.getElementById('studentClassSelect').value;
     const studentId = document.getElementById('studentNameSelect').value;
+    
+    console.log('Login attempt:', { classId, studentId });
     
     if (!classId || !studentId) {
         alert('Please select both class and your name');
@@ -541,8 +545,12 @@ function studentLoginSubmit() {
     localStorage.setItem('loggedInStudent', studentId);
     localStorage.setItem('loggedInClass', classId);
     
+    console.log('Fetching student and class data...');
     const student = db.getStudent(classId, studentId);
     const classData = db.getClass(classId);
+    
+    console.log('Student:', student);
+    console.log('Class:', classData);
     
     if (!student || !classData) {
         alert('Student or class data not found. Please try again.');
