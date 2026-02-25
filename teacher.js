@@ -3,6 +3,31 @@
 let currentClassId = null;
 let currentStudentId = null;
 
+// Make functions globally accessible
+window.switchDashboardTab = switchDashboardTab;
+window.showAddClassModal = showAddClassModal;
+window.showAddStudentModal = showAddStudentModal;
+window.showCreateAssignmentModal = showCreateAssignmentModal;
+window.closeModal = closeModal;
+window.saveClass = saveClass;
+window.loadClasses = loadClasses;
+window.viewClass = viewClass;
+window.deleteClass = deleteClass;
+window.saveStudent = saveStudent;
+window.deleteStudent = deleteStudent;
+window.loadAssignments = loadAssignments;
+window.saveAssignment = saveAssignment;
+window.deleteAssignment = deleteAssignment;
+window.loadReports = loadReports;
+window.viewStudentReport = viewStudentReport;
+window.shareReport = shareReport;
+window.loadStudentsForLogin = loadStudentsForLogin;
+window.studentLoginSubmit = studentLoginSubmit;
+window.studentLogout = studentLogout;
+window.switchStudentTab = switchStudentTab;
+window.startAssignment = startAssignment;
+window.startPracticeMode = startPracticeMode;
+
 // Dashboard Tab Switching
 function switchDashboardTab(tabName) {
     // Hide all tabs
