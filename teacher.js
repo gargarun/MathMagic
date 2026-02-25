@@ -534,7 +534,8 @@ function studentLoginSubmit() {
     
     if (!student || !classData) {
         alert('Student or class data not found. Please try again.');
-        console.error('Failed to load student or class data');\n        return;
+        console.error('Failed to load student or class data');
+        return;
     }
     
     console.log('Student logged in:', student.name, 'from', classData.name);
