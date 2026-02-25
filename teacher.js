@@ -492,9 +492,9 @@ function studentLoginSubmit() {
     loggedInClass = classId;
     loggedInStudent = studentId;
     
-    // Store login session
-    sessionStorage.setItem('loggedInStudent', studentId);
-    sessionStorage.setItem('loggedInClass', classId);
+    // Store login session (persists across browser restarts)
+    localStorage.setItem('loggedInStudent', studentId);
+    localStorage.setItem('loggedInClass', classId);
     
     const student = db.getStudent(classId, studentId);
     const classData = db.getClass(classId);
@@ -515,6 +515,12 @@ function studentLoginSubmit() {
 function studentLogout() {
     loggedInStudent = null;
     loggedInClass = null;
+    
+    // Clear persisted login
+    localStorage.removeItem('loggedInStudent');
+    localStorage.removeItem('loggedInClass');
+    
+    console.log('Student logged out');
     showSection('studentLogin');
 }
 
@@ -689,9 +695,9 @@ document.addEventListener('DOMContentLoaded', () => {
             classes.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
     }
     
-    // Restore student session if exists
-    const savedStudentId = sessionStorage.getItem('loggedInStudent');
-    const savedClassId = sessionStorage.getItem('loggedInClass');
+    // Restore student session if exists (persists across browser restarts)
+    const savedStudentId = localStorage.getItem('loggedInStudent');
+    const savedClassId = localStorage.getItem('loggedInClass');
     
     if (savedStudentId && savedClassId) {
         const student = db.getStudent(savedClassId, savedStudentId);
@@ -700,11 +706,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (student && classData) {
             loggedInStudent = savedStudentId;
             loggedInClass = savedClassId;
-            console.log('Restored student session:', student.name);
+            console.log('Restored student session:', student.name, 'from', classData.name);
+            
+            // Auto-show student dashboard
+            document.getElementById('studentWelcome').textContent = `Welcome back, ${student.name}! (${classData.name})`;
+            // Don't auto-navigate to dashboard, let user choose
         } else {
             // Clear invalid session
-            sessionStorage.removeItem('loggedInStudent');
-            sessionStorage.removeItem('loggedInClass');
+            console.log('Clearing invalid student session');
+            localStorage.removeItem('loggedInStudent');
+            localStorage.removeItem('loggedInClass');
         }
     }
     
